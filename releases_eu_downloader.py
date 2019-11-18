@@ -39,5 +39,10 @@ def get_html(username, password):
 
 
 def parse_html(html):
+    soup = BeautifulSoup(html, features='html.parser')
+    table = soup.find('table', {'class': 'customTable'}).tbody
+    for row in table.findAll('tr'):
+
+        print(row)
     result = html  # do some shit
     return result
