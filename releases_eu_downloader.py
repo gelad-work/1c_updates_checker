@@ -8,7 +8,7 @@ from collections import namedtuple
 ProductGroup = namedtuple('ProductGroup', ['id', 'name'])
 # data type for a product
 Product = namedtuple('Product', ['id', 'name', 'group_id', 'actual_release', 'released_date',
-                                 'upcoming_release', 'planned_release_date'])
+                                 'upcoming_release', 'planned_release_date', 'publication_date'])
 
 
 def get_releases():
@@ -51,16 +51,18 @@ def parse_html(html):
     groups = []
     products = []
     for row in table.findAll('tr'):
-        if row.find('td', {'class': 'groupColumn'}):
+        if row.find('td', {'class': 'groupColumn'}):  # found a product group
             groups.append(ProductGroup(id=row.attrs['group'].strip(), name=row.text.strip()))
-        if row.find('td', {'class': 'nameColumn'}):
+        if row.find('td', {'class': 'nameColumn'}):  # found a product
             print(row.a['href'].replace('/project/', '').strip())
             print(row.a.text.strip())
             try:
                 print(row.find('td', {'class': 'versionColumn actualVersionColumn'}).text.strip())
             except AttributeError:
-                print('NoRelease')
+                print('None')
             print(row.attrs['parent-group'].strip())
-
+            print(row.find('td', {'class': 'releaseDate'}).text.strip())
+            print(row.find('td', {'class': 'updateDate'}).text.strip())  # "" change to None?
+            print(row.find('td', {'class': 'planReleaseDate'}).text.strip())  # "Не определена" change to None?
     result = html  # do some shit
     return result
