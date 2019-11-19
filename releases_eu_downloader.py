@@ -7,7 +7,8 @@ from collections import namedtuple
 # data type for product group
 ProductGroup = namedtuple('ProductGroup', ['id', 'name'])
 # data type for a product
-Product = namedtuple('Product', ['id', 'name'])
+Product = namedtuple('Product', ['id', 'name', 'group_id', 'actual_release', 'released_date',
+                                 'upcoming_release', 'planned_release_date'])
 
 
 def get_releases():
@@ -52,6 +53,14 @@ def parse_html(html):
     for row in table.findAll('tr'):
         if row.find('td', {'class': 'groupColumn'}):
             groups.append(ProductGroup(id=row.attrs['group'].strip(), name=row.text.strip()))
+        if row.find('td', {'class': 'nameColumn'}):
+            print(row.a['href'].replace('/project/', '').strip())
+            print(row.a.text.strip())
+            try:
+                print(row.find('td', {'class': 'versionColumn actualVersionColumn'}).text.strip())
+            except AttributeError:
+                print('NoRelease')
+            print(row.attrs['parent-group'].strip())
 
     result = html  # do some shit
     return result
