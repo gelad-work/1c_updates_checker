@@ -1,7 +1,13 @@
 from requests import Session
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
+from collections import namedtuple
 # TODO: handle import errors and/or make setup.py file to download dependencies
+
+# data type for product group
+ProductGroup = namedtuple('ProductGroup', ['id', 'name'])
+# data type for a product
+Product = namedtuple('Product', ['id', 'name'])
 
 
 def get_releases():
@@ -41,8 +47,11 @@ def get_html(username, password):
 def parse_html(html):
     soup = BeautifulSoup(html, features='html.parser')
     table = soup.find('table', {'class': 'customTable'}).tbody
+    groups = []
+    products = []
     for row in table.findAll('tr'):
+        if row.find('td', {'class': 'groupColumn'}):
+            groups.append(ProductGroup(id=row.attrs['group'].strip(), name=row.text.strip()))
 
-        print(row)
     result = html  # do some shit
     return result
